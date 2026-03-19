@@ -58,12 +58,15 @@ cp .env.example .env
 
 | Variable | Required | Default | Used by |
 | --- | --- | --- | --- |
-| `N8N_API_KEY` | Phase 1 | — | Export |
-| `N8N_BASE_URL` | Phase 1 | `http://localhost:5678` | Export |
-| `ANTHROPIC_API_KEY` | Phases 3–4 | — | LLM Analysis, Synthesis |
-| `ANTHROPIC_MODEL` | No | `claude-sonnet-4-6` | LLM Analysis, Synthesis |
+| `N8N_API_KEY` | Export | — | Export |
+| `N8N_BASE_URL` | No | `http://localhost:5678` | Export |
+| `ANTHROPIC_API_KEY` | Analyze + Synthesize | — | Analyze, Synthesize |
+| `ANTHROPIC_ANALYZE_MODEL` | No | `claude-sonnet-4-6` | Analyze |
+| `ANTHROPIC_SYNTHESIS_MODEL` | No | `claude-sonnet-4-6` | Synthesize |
 | `CONCURRENCY` | No | `5` / `3` | Parallel LLM requests |
 | `OUTPUT_DIR` | No | `./output` | All phases |
+
+You can use a cheaper/faster model for per-workflow analysis and a stronger model for synthesis, or set both to the same model.
 
 ### Generating an n8n API Key
 
@@ -77,22 +80,22 @@ cp .env.example .env
 ### Run the full pipeline
 
 ```bash
-npm run all       # export → analyze → llm-analyze → synthesize
+npm run all       # export → scan → analyze → synthesize
 ```
 
 ### Run phases individually
 
 ```bash
-npm run export        # Phase 1: Pull workflow JSON from n8n
-npm run analyze       # Phase 2: Static analysis (no LLM, no API key needed)
-npm run llm-analyze   # Phase 3: LLM-powered deep analysis of each workflow
-npm run synthesize    # Phase 4: System-level synthesis + README generation
+npm run export        # Pull workflow JSON from n8n
+npm run scan          # Static analysis (no LLM, no API key needed)
+npm run analyze       # LLM-powered deep analysis of each workflow
+npm run synthesize    # System-level synthesis + README generation
 ```
 
 ### Already have the exported JSON?
 
 ```bash
-npm run report    # Phases 2–4 only (skips export)
+npm run report    # scan → analyze → synthesize (skips export)
 ```
 
 ### Resumability
@@ -101,25 +104,25 @@ Every phase is resumable. If interrupted, just re-run the same command — it pi
 
 ## How it works
 
-### Phase 1: Export
+### Export
 
 Pulls every workflow from the n8n REST API and saves them as individual JSON files with a manifest.
 
-### Phase 2: Static Analysis
+### Scan
 
 Parses each workflow JSON without any LLM to extract: triggers (webhook, cron, manual, sub-workflow), external services and credentials, cross-workflow dependencies ("Execute Workflow" nodes), HTTP endpoints, and node counts. Produces a table of contents, a Mermaid dependency graph, per-workflow stubs, and a structured `analysis.json`.
 
-### Phase 3: LLM Analysis
+### Analyze
 
 Sends each workflow's full JSON plus a condensed registry of all workflows to Claude. For each workflow, generates: an executive summary, trigger details, inputs/outputs, step-by-step logic flow in pseudocode, external dependencies, cross-references, and potential concerns (hardcoded secrets, missing error handling, dead code, etc.). Also runs a grouping pass to categorize workflows by business function.
 
-### Phase 4: Systems Synthesis
+### Synthesize
 
 Walks the dependency graph to find connected components — groups of workflows that call each other. For each system, generates an architectural narrative covering: purpose, architecture, workflow inventory, data flow, key concerns, and migration notes. Produces a top-level systems overview, a standalone workflows catalogue, and enriches all docs with navigation and explainer sections.
 
 ## Cost estimate
 
-Phases 1–2 are free (no LLM calls). Phases 3–4 cost roughly **$0.01–0.02 per workflow** at Sonnet pricing. A 200-workflow instance runs about **$2–5 total**.
+Export and Scan are free (no LLM calls). Analyze and Synthesize cost roughly **$0.01–0.02 per workflow** at Sonnet pricing. A 200-workflow instance runs about **$2–5 total**.
 
 ## License
 

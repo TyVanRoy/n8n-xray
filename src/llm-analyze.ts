@@ -8,7 +8,7 @@ require("dotenv").config({
 // Config
 // ---------------------------------------------------------------------------
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6";
+const MODEL = process.env.ANTHROPIC_ANALYZE_MODEL || "claude-sonnet-4-6";
 const OUTPUT_ROOT = process.env.OUTPUT_DIR || "./output";
 const WORKFLOWS_DIR = process.env.WORKFLOWS_DIR || path.join(OUTPUT_ROOT, "workflows");
 const ANALYSIS_DIR = process.env.ANALYSIS_OUTPUT_DIR || path.join(OUTPUT_ROOT, "analysis");

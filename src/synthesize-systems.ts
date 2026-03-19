@@ -8,7 +8,7 @@ require("dotenv").config({
 // Config
 // ---------------------------------------------------------------------------
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
-const MODEL = process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6";
+const MODEL = process.env.ANTHROPIC_SYNTHESIS_MODEL || "claude-sonnet-4-6";
 const OUTPUT_ROOT = process.env.OUTPUT_DIR || "./output";
 const WORKFLOWS_DIR = process.env.WORKFLOWS_DIR || path.join(OUTPUT_ROOT, "workflows");
 const ANALYSIS_DIR = process.env.ANALYSIS_OUTPUT_DIR || path.join(OUTPUT_ROOT, "analysis");
@@ -483,9 +483,9 @@ This directory contains a complete analysis of the organization's n8n automation
 This analysis was produced by a four-phase automated pipeline. For setup and usage instructions, see the [project README](../../README.md).
 
 1. **Export** — All ${stats.totalWorkflows} workflow JSON definitions were pulled from the n8n instance via its REST API
-2. **Static Analysis** — Triggers, services, credentials, cross-references, and dependency graphs were extracted from the raw JSON without any LLM involvement
-3. **LLM Analysis** — Each workflow's full JSON was sent to Claude for deep documentation: executive summaries, logic flow pseudocode, external dependencies, and migration concerns
-4. **Systems Synthesis** — Connected workflows were grouped into systems, architectural narratives were generated, and this README and all navigation docs were produced
+2. **Scan** — Triggers, services, credentials, cross-references, and dependency graphs were extracted from the raw JSON without any LLM involvement
+3. **Analyze** — Each workflow's full JSON was sent to Claude for deep documentation: executive summaries, logic flow pseudocode, external dependencies, and migration concerns
+4. **Synthesize** — Connected workflows were grouped into systems, architectural narratives were generated, and this README and all navigation docs were produced
 
 ## Documents
 
