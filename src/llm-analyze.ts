@@ -170,12 +170,12 @@ function buildCondensedToc(analysis: AnalysisJson): string {
     );
 
     lines.push("## All Workflows\n");
-    lines.push("| ID | Name | Active | Nodes | Trigger Types |");
-    lines.push("| --- | --- | --- | --- | --- |");
+    lines.push("| ID | Name | File | Active | Nodes | Trigger Types |");
+    lines.push("| --- | --- | --- | --- | --- | --- |");
     for (const wf of analysis.workflows) {
         const triggers = wf.triggers.map((t) => t.type).join(", ");
         lines.push(
-            `| ${wf.id} | ${wf.name} | ${wf.active} | ${wf.nodeCount} | ${triggers} |`,
+            `| ${wf.id} | ${wf.name} | ${wf.markdownFile} | ${wf.active} | ${wf.nodeCount} | ${triggers} |`,
         );
     }
 
@@ -232,7 +232,7 @@ A step-by-step pseudocode walkthrough of the node chain. Use indentation for bra
 List every external service, API, or credential this workflow requires. For each, briefly note what it's used for in context (not just "Google Sheets" but "Google Sheets — reads lead list from 'Inbound Leads' tab").
 
 ## Cross-References
-List every workflow that this one calls or is called by. For each, write a one-line explanation of the relationship. Use markdown links in the format [Workflow Name](ID__sanitized_name.md). If no cross-references exist, write "None — this is a standalone workflow."
+List every workflow that this one calls or is called by. For each, write a one-line explanation of the relationship. Use markdown links with the EXACT filename from the "File" column in the workflow registry — do NOT construct filenames yourself. Format: [Workflow Name](exact_filename.md). If no cross-references exist, write "None — this is a standalone workflow."
 
 ## Potential Concerns
 Flag anything a CTO should know before migration:
@@ -248,7 +248,7 @@ If the workflow is straightforward and well-structured, say so briefly.
 
 IMPORTANT:
 - Do NOT wrap your response in markdown code fences. Just output the raw markdown.
-- When referencing other workflows, use their name from the TOC and link to their markdown file using the pattern: {id}__{sanitized_name}.md (replace spaces with underscores, remove special characters).
+- When referencing other workflows, look up their exact filename from the "File" column in the workflow registry. Do NOT attempt to construct filenames by sanitizing names yourself — always use the exact filename from the registry.
 - Be precise about what each node does. Read the node parameters carefully.`;
 
     const user = `<condensed_toc>

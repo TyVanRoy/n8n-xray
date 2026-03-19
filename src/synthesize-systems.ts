@@ -340,14 +340,14 @@ Don't repeat every individual concern — synthesize the important patterns.
 
 IMPORTANT:
 - Do NOT wrap your response in markdown code fences
-- Reference individual workflows using markdown links: [Workflow Name](workflows/{markdownFile})
+- When referencing workflows, you MUST use the exact filename from the lookup table provided — do NOT attempt to construct filenames yourself. Use the format: [Workflow Name](../workflows/{exact filename from lookup table})
 - Be concise but complete — this is a reference document, not a novel`;
 
     const workflowSummaries = workflows
         .map(
             (w) =>
                 `### ${w.name}
-**ID:** ${w.id} | **Nodes:** ${w.nodeCount} | **File:** [${w.name}](workflows/${w.markdownFile})
+**ID:** ${w.id} | **Nodes:** ${w.nodeCount} | **File:** [${w.name}](../workflows/${w.markdownFile})
 **Triggers:** ${w.triggers.join(", ") || "none"}
 **Services:** ${w.services.join(", ") || "none"}
 **Calls:** ${w.callsIds.map((id) => allDigests.find((d) => d.id === id)?.name ?? id).join(", ") || "none"}
@@ -361,7 +361,19 @@ IMPORTANT:
         )
         .join("\n\n---\n\n");
 
-    const user = `This system contains ${workflows.length} connected workflow(s):\n\n${workflowSummaries}`;
+    // Build a filename lookup so the LLM doesn't have to guess sanitized names
+    const filenameLookup = allDigests
+        .map((d) => `- ${d.id}: ${d.name} → ${d.markdownFile}`)
+        .join("\n");
+
+    const user = `## Workflow Filename Lookup
+IMPORTANT: Always use these exact filenames when linking to workflows. Do NOT construct filenames yourself.
+
+${filenameLookup}
+
+---
+
+This system contains ${workflows.length} connected workflow(s):\n\n${workflowSummaries}`;
 
     return { system, user };
 }
@@ -731,7 +743,7 @@ async function main() {
             const markdown = await callAnthropic(system, user);
 
             const wfList = workflows
-                .map((w) => `[${w.name}](workflows/${w.markdownFile})`)
+                .map((w) => `[${w.name}](../workflows/${w.markdownFile})`)
                 .join(" · ");
 
             const header =
@@ -800,7 +812,7 @@ async function main() {
             const rows = standalones
                 .map(
                     (w) =>
-                        `| [${w.name}](workflows/${w.markdownFile}) | ${w.triggers.join(", ")} | ${w.services.join(", ") || "—"} | ${w.executiveSummary.substring(0, 150)}${w.executiveSummary.length > 150 ? "…" : ""} |`,
+                        `| [${w.name}](../workflows/${w.markdownFile}) | ${w.triggers.join(", ")} | ${w.services.join(", ") || "—"} | ${w.executiveSummary.substring(0, 150)}${w.executiveSummary.length > 150 ? "…" : ""} |`,
                 )
                 .join("\n");
 
