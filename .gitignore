@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+
+# Output (generated data — re-run the pipeline to regenerate)
+output/
+
+# Environment
+.env
+.env.local
+
+# IDE / Editor
+.claude/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# TypeScript
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*

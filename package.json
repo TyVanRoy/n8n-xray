@@ -1,0 +1,18 @@
+{
+    "name": "n8n-xray",
+    "version": "1.0.0",
+    "description": "Export, analyze, and document all workflows within an n8n instance with LLM-powered insights",
+    "scripts": {
+        "export": "tsx src/export-workflows.ts",
+        "analyze": "tsx src/analyze-workflows.ts",
+        "llm-analyze": "tsx src/llm-analyze.ts",
+        "synthesize": "tsx src/synthesize-systems.ts",
+        "all": "npm run export && npm run analyze && npm run llm-analyze && npm run synthesize",
+        "report": "npm run analyze && npm run llm-analyze && npm run synthesize"
+    },
+    "devDependencies": {
+        "tsx": "^4.19.0",
+        "typescript": "^5.6.0",
+        "@types/node": "^22.0.0"
+    }
+}
